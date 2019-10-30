@@ -5,6 +5,20 @@ from PyQt5.QtGui import *
 import sqlite3
 from login import Ui_MainWindow_log
 from reg import Ui_MainWindow_reg
+from main_win import Ui_MainWindow_main
+
+
+class MainWin(QMainWindow, Ui_MainWindow_main):
+    def __init__(self, *args):
+        super().__init__()
+        self.setupUi(self)
+        self.setWindowTitle('CC')
+
+        self.login = args[-1]
+        con = sqlite3.connect("users.db")
+        list_info = con.execute(f"""Select * from Users_info WHERE id = 
+                        (select id from Users_log_password where login = '{self.login}')""").fetchall()
+        self.name.setText(f'{list_info[0][1]} {list_info[0][2]} {list_info[0][3]}')
 
 
 class Login(QMainWindow, Ui_MainWindow_log):
@@ -33,7 +47,9 @@ class Login(QMainWindow, Ui_MainWindow_log):
         # проверяем пароль
         if self.check_log_pas():
             # здесь должна вызываться наша соц сеть
-            print(True)
+            self.close()
+            self.main = MainWin(self, self.login_lineEdit.text())
+            self.main.show()
         else:
             # окно ошибки
             self.error = QMessageBox(self)
@@ -63,8 +79,9 @@ class Registration(QMainWindow, Ui_MainWindow_reg):
         # тупая проверка на пустые строки
         if (
                 self.mail_lineEdit.text() != '' and self.password_lineEdit.text() != 0 and self.name_lineEdit.text() != '' and
-                self.surname_lineEdit.text() != '' and self.patronymic_lineEdit.text() != '' and self.datebirth_dateEdit.text() != '' and \
-                self.city_lineEdit.text() != '' and len(login) == 0):
+                self.surname_lineEdit.text() != '' and self.patronymic_lineEdit.text() != '' and self.datebirth_dateEdit.text() != '' and
+                self.city_lineEdit.text() != '' and len(login) == 0 and len(self.password_lineEdit.text()) >= 6 and self.name_lineEdit.text().isalpha()
+                and self.surname_lineEdit.text().isalpha() and self.patronymic_lineEdit.text().isalpha() and self.city_lineEdit.text().isalpha()):
             # заносим в БД
             con.execute(f"""INSERT INTO Users_log_password(login, password) VALUES 
             ('{self.mail_lineEdit.text()}', '{self.password_lineEdit.text()}')""")
@@ -74,23 +91,36 @@ class Registration(QMainWindow, Ui_MainWindow_reg):
             con.commit()
             self.error = QMessageBox(self)
             self.error.setText('Успешная регистрация')
-            self.error.setWindowTitle('Ошибка')
+            self.error.setWindowTitle('Успешно')
             self.error.exec()
             # выходит окно об успешной регистрации, после нажатия ОК, окно регистрации закроется
             self.close()
-        # если у нас есть такой логин
-        elif (
-                self.mail_lineEdit.text() != '' and self.password_lineEdit.text() != 0 and self.name_lineEdit.text() != '' and
-                self.surname_lineEdit.text() != '' and self.patronymic_lineEdit.text() != '' and self.datebirth_dateEdit.text() != '' and \
-                self.city_lineEdit.text() != '' and len(login) != 0):
-            self.error = QMessageBox(self)
-            self.error.setText('Такой логин уже существует!\nВведите другой другой')
-            self.error.setWindowTitle('Ошибка')
-            self.error.exec()
         # если у нас не все поля заполнены
-        else:
+        elif not (self.mail_lineEdit.text() != '' and self.password_lineEdit.text() != 0 and self.name_lineEdit.text() != '' and
+                self.surname_lineEdit.text() != '' and self.patronymic_lineEdit.text() != '' and self.datebirth_dateEdit.text() != '' and
+                self.city_lineEdit.text() != ''):
             self.error = QMessageBox(self)
             self.error.setText('Заполните все поля!')
+            self.error.setWindowTitle('Ошибка')
+            self.error.exec()
+
+        # если у нас есть такой логин
+        elif len(login) != 0:
+            self.error = QMessageBox(self)
+            self.error.setText('Такой логин уже существует!\nВведите другой')
+            self.error.setWindowTitle('Ошибка')
+            self.error.exec()
+        # проверка что в имени, фамилии, отчестве и городе только буквы
+        elif (not self.name_lineEdit.text().isalpha()
+                or not self.surname_lineEdit.text().isalpha() or not self.patronymic_lineEdit.text().isalpha() or not self.city_lineEdit.text().isalpha()):
+            self.error = QMessageBox(self)
+            self.error.setText('Для ввода имени, фамилии, отчества и города используйте только буквы!')
+            self.error.setWindowTitle('Ошибка')
+            self.error.exec()
+        # проверка длинны пароля
+        elif len(self.password_lineEdit.text()) < 6:
+            self.error = QMessageBox(self)
+            self.error.setText('Слишком короткий пароль!')
             self.error.setWindowTitle('Ошибка')
             self.error.exec()
 
