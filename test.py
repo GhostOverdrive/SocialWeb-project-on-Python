@@ -85,7 +85,7 @@ class Registration(QMainWindow, Ui_MainWindow_reg):
             # заносим в БД
             con.execute(f"""INSERT INTO Users_log_password(login, password) VALUES 
             ('{self.mail_lineEdit.text()}', '{self.password_lineEdit.text()}')""")
-            con.execute(f"""INSERT INTO User_info(name, surname, patronymic, dateOfBirth, city) VALUES 
+            con.execute(f"""INSERT INTO Users_info(name, surname, patronymic, dateOfBirth, city) VALUES 
                     ('{self.name_lineEdit.text()}', '{self.surname_lineEdit.text()}', '{self.patronymic_lineEdit.text()}',
                     '{self.datebirth_dateEdit.text()}', '{self.city_lineEdit.text()}')""")
             con.commit()
