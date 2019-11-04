@@ -11,12 +11,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow_log(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(250, 250)
-        MainWindow.setMinimumSize(QtCore.QSize(250, 250))
-        MainWindow.setMaximumSize(QtCore.QSize(250, 16777215))
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+    def setupUi(self, MainWindow_log):
+        MainWindow_log.setObjectName("MainWindow_log")
+        MainWindow_log.resize(250, 250)
+        MainWindow_log.setMinimumSize(QtCore.QSize(250, 250))
+        MainWindow_log.setMaximumSize(QtCore.QSize(250, 250))
+        self.centralwidget = QtWidgets.QWidget(MainWindow_log)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -66,6 +66,7 @@ class Ui_MainWindow_log(object):
         font.setBold(True)
         font.setWeight(75)
         self.enter.setFont(font)
+        self.enter.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.enter.setObjectName("enter")
         self.verticalLayout.addWidget(self.enter)
         self.registration = QtWidgets.QPushButton(self.centralwidget)
@@ -75,25 +76,26 @@ class Ui_MainWindow_log(object):
         font.setBold(True)
         font.setWeight(75)
         self.registration.setFont(font)
+        self.registration.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.registration.setObjectName("registration")
         self.verticalLayout.addWidget(self.registration)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        MainWindow_log.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow_log)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 250, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        MainWindow_log.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow_log)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        MainWindow_log.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(MainWindow_log)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow_log)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, MainWindow_log):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.login_label.setText(_translate("MainWindow", "Логин:"))
-        self.password_label.setText(_translate("MainWindow", "Пароль:"))
-        self.enter.setText(_translate("MainWindow", "Войти"))
-        self.registration.setText(_translate("MainWindow", "Регистрация"))
+        MainWindow_log.setWindowTitle(_translate("MainWindow_log", "MainWindow"))
+        self.login_label.setText(_translate("MainWindow_log", "Логин:"))
+        self.password_label.setText(_translate("MainWindow_log", "Пароль:"))
+        self.enter.setText(_translate("MainWindow_log", "Войти"))
+        self.registration.setText(_translate("MainWindow_log", "Регистрация"))
