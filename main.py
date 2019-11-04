@@ -138,6 +138,7 @@ class MainWin(QMainWindow, Ui_MainWindow_main):
         self.setWindowTitle('CC')
         # основное
         self.value = False
+        self.value_close = False
         self.login = args[-1]
         self.con_main = sqlite3.connect("users.db")
         self.list_info = self.con_main.execute(f"""Select * from Users_info WHERE id = 
@@ -186,7 +187,14 @@ class MainWin(QMainWindow, Ui_MainWindow_main):
         self.del_friend_btn.setVisible(False)
         self.add_friend_page_btn.setVisible(False)
 
+    def closeEvent(self, event):
+        if self.value_close:
+            self.exit()
+        else:
+            event.ignore()
+
     def exit(self):
+        self.value_close = True
         self.login_win = Login(self)
         self.login_win.show()
         # проверка, что диалоговое окно было открыто
