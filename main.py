@@ -19,7 +19,7 @@ class Login(QMainWindow, Ui_MainWindow_log):
         self.enter.clicked.connect(self.open_main_win)
 
     def check_log_pas(self):
-        con = sqlite3.connect("users.db")
+        con = sqlite3.connect("\\\\KAB0902\\Users\\Public\\users.db")
         # получаем пароль от этого логина
         password = con.execute(f"""Select password from Users_log_password 
                                    WHERE login = '{self.login_lineEdit.text()}'""").fetchall()
@@ -60,7 +60,7 @@ class Registration(QMainWindow, Ui_MainWindow_reg):
         self.reg.clicked.connect(self.registration)
 
     def registration(self):
-        con = sqlite3.connect("users.db")
+        con = sqlite3.connect("\\\\KAB0902\\Users\\Public\\users.db")
         # проверяем есть ли такой логин, если есть то длинна этого списка будет 1, иначе 0
         login = con.execute(f"""Select password from Users_log_password 
                                 WHERE login = '{self.mail_lineEdit.text()}'""").fetchall()
@@ -135,12 +135,12 @@ class MainWin(QMainWindow, Ui_MainWindow_main):
     def __init__(self, *args):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle('CC')
+        self.setWindowTitle('NAPRIA')
         # основное
         self.value = False
         self.value_close = False
         self.login = args[-1]
-        self.con_main = sqlite3.connect("users.db")
+        self.con_main = sqlite3.connect("\\\\KAB0902\\Users\\Public\\users.db")
         self.list_info = self.con_main.execute(f"""Select * from Users_info WHERE id = 
                                                    (select id from Users_log_password 
                                                    where login = '{self.login}')""").fetchall()
@@ -582,9 +582,10 @@ class Dialog(QMainWindow, Ui_MainWindow_dialog):
         self.user.setText(f'{" ".join(self.other)}')
         # подключаем кнопки
         self.send_btn.clicked.connect(self.send_msg)
+        self.msg_lineEdit.textEdited.connect(self.update_msg)
         # окно только для чтения
         self.dialog_plainTextEdit.setReadOnly(True)
-        self.con_main = sqlite3.connect("users.db")
+        self.con_main = sqlite3.connect("\\\\KAB0902\\Users\\Public\\users.db")
         result = self.con_main.execute(f"""SELECT text from Users_dialog 
                                            WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
                                            id = '{str(self.id_user) + ' ' + str(self.my_id)}'""").fetchall()
@@ -595,14 +596,22 @@ class Dialog(QMainWindow, Ui_MainWindow_dialog):
         else:
             self.dialog_plainTextEdit.insertPlainText(result[0][0])
 
+    def update_msg(self):
+        if self.msg_lineEdit.text() != '':
+            result = self.con_main.execute(f"""SELECT text from Users_dialog 
+                                                           WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
+                                                           id = '{str(self.id_user) + ' ' + str(self.my_id)}'""").fetchall()
+            self.dialog_plainTextEdit.setPlainText(f'{result[0][0]}')
+            self.dialog_plainTextEdit.verticalScrollBar().setValue(self.dialog_plainTextEdit.verticalScrollBar().maximum())
+
     def send_msg(self):
         if self.msg_lineEdit.text() != '':
             result = self.con_main.execute(f"""SELECT text from Users_dialog 
-                                                       WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
-                                                       id = '{str(self.id_user) + ' ' + str(self.my_id)}'""").fetchall()
-            self.dialog_plainTextEdit.insertPlainText(result[0][0])
+                                                   WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
+                                                   id = '{str(self.id_user) + ' ' + str(self.my_id)}'""").fetchall()
             self.dialog_plainTextEdit.setPlainText(
-                f'{self.dialog_plainTextEdit.toPlainText()}{self.name[0]}: \n    {self.msg_lineEdit.text()} \n')
+                f'{result[0][0]}{self.name[0]}: \n    {self.msg_lineEdit.text()} \n')
+            self.dialog_plainTextEdit.verticalScrollBar().setValue(self.dialog_plainTextEdit.verticalScrollBar().maximum())
             self.msg_lineEdit.setText('')
             self.con_main.execute(f"""UPDATE Users_dialog SET text = '{self.dialog_plainTextEdit.toPlainText()}' 
                                       WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
