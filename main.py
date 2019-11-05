@@ -597,6 +597,10 @@ class Dialog(QMainWindow, Ui_MainWindow_dialog):
 
     def send_msg(self):
         if self.msg_lineEdit.text() != '':
+            result = self.con_main.execute(f"""SELECT text from Users_dialog 
+                                                       WHERE id = '{str(self.my_id) + ' ' + str(self.id_user)}' or 
+                                                       id = '{str(self.id_user) + ' ' + str(self.my_id)}'""").fetchall()
+            self.dialog_plainTextEdit.insertPlainText(result[0][0])
             self.dialog_plainTextEdit.setPlainText(
                 f'{self.dialog_plainTextEdit.toPlainText()}{self.name[0]}: \n    {self.msg_lineEdit.text()} \n')
             self.msg_lineEdit.setText('')
